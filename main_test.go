@@ -15,12 +15,12 @@ func TestProcessReceipt(t *testing.T) {
 		"retailer": "M&M Corner Market",
 		"purchaseDate": "2022-03-20",
 		"purchaseTime": "14:33",
-		"total": 9.00,
+		"total": 23.24,
 		"items": [
-			{"shortDescription": "Gatorade", "price": 2.25},
-			{"shortDescription": "Gatorade", "price": 2.25},
-			{"shortDescription": "Gatorade", "price": 2.25},
-			{"shortDescription": "Gatorade", "price": 2.25}
+			{ "shortDescription": "Gatorade", "price": 2.25 },
+			{ "shortDescription": "Mountain Dew 12PK", "price": 6.49 },
+			{ "shortDescription": "Emils Cheese Pizza", "price": 12.25 },
+			{ "shortDescription": "Pepsi", "price": 2.25 }
 		]
 	}`
 
@@ -52,12 +52,12 @@ func TestGetPoints(t *testing.T) {
 		"retailer": "M&M Corner Market",
 		"purchaseDate": "2022-03-20",
 		"purchaseTime": "14:33",
-		"total": 9.00,
+		"total": 23.24,
 		"items": [
-			{"shortDescription": "Gatorade", "price": 2.25},
-			{"shortDescription": "Gatorade", "price": 2.25},
-			{"shortDescription": "Gatorade", "price": 2.25},
-			{"shortDescription": "Gatorade", "price": 2.25}
+			{ "shortDescription": "Gatorade", "price": 2.25 },
+			{ "shortDescription": "Mountain Dew 12PK", "price": 6.49 },
+			{ "shortDescription": "Emils Cheese Pizza", "price": 12.25 },
+			{ "shortDescription": "Pepsi", "price": 2.25 }
 		]
 	}`
 
