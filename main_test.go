@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestProcessReceipt(t *testing.T) {
@@ -88,4 +90,6 @@ func TestGetPoints(t *testing.T) {
 	if _, exists := pointsResp["points"]; !exists {
 		t.Errorf("Expected response to contain 'points'")
 	}
+
+	assert.Equal(t, 37, pointsResp["points"], "Expected result to be 37")
 }
