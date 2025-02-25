@@ -1,3 +1,12 @@
+
+
+openssl x509 -req -in request.csr -signkey private.key -out certificate.crt -days 365
+
+openssl pkcs12 -export -in certificate.crt -inkey private.key -out keystore.p12 -name myalias
+
+keytool -importkeystore -srckeystore keystore.p12 -srcstoretype PKCS12 -destkeystore keystore.jks -deststoretype JKS
+
+
 # Receipt Processor
 
 Build a webservice that fulfils the documented API. The API is described below. A formal definition is provided 
@@ -6,20 +15,20 @@ described API to test your solution.
 
 Provide any instructions required to run your application.
 
-Data does not need to persist when your application stops. It is sufficient to store information in memory. There are too many different database solutions, we will not be installing a database on our system when testing your application.
-
-## Language Selection
-
-You can assume our engineers have Go and Docker installed to run your application. Go is our preferred language, but it is not a requirement for this exercise.
-
-If you are using a language other than Go, the engineer evaluating your submission may not have an environment ready for your language. Your instructions should include how to get an environment in any OS that can run your project. For example, if you write your project in Javascript simply stating to "run `npm start` to start the application" is not sufficient, because the engineer may not have NPM. Providing a docker file and the required docker command is a simple way to satisfy this requirement.
+Data doeslanguage other than Go, the engineer evaluating your submission may not have an environment ready for your language. Your instructions should include how to get an environment in any OS that can run your project. For example, if you write your project in Javascript simply stating to "run `npm start` to start the application" is not sufficient, because the engineer may not have NPM. Providing a docker file and the required docker command is a simple way to satisfy this requirement.
 
 ## Submitting Your Solution
 
 Provide a link to a public repository, such as GitHub or BitBucket, that contains your code to the provided link through Greenhouse.
 
 ---
-## Summary of API Specification
+## Summary of API Specification not need to persist when your application stops. It is sufficient to store information in memory. There are too many different database solutions, we will not be installing a database on our system when testing your application.
+
+## Language Selection
+
+You can assume our engineers have Go and Docker installed to run your application. Go is our preferred language, but it is not a requirement for this exercise.
+
+If you are using a 
 
 ### Endpoint: Process Receipts
 
