@@ -6,6 +6,13 @@ openssl pkcs12 -export -in certificate.crt -inkey private.key -out keystore.p12 
 
 keytool -importkeystore -srckeystore keystore.p12 -srcstoretype PKCS12 -destkeystore keystore.jks -deststoretype JKS
 
+keytool -importkeystore \
+  -srckeystore keystore.p12 \
+  -srcstoretype PKCS12 \
+  -srcstorepass source_password \
+  -destkeystore keystore.jks \
+  -deststoretype JKS \
+  -deststorepass destination_password
 
 # Receipt Processor
 
