@@ -1,4 +1,38 @@
+import software.amazon.awssdk.services.acm.AcmClient;
+import software.amazon.awssdk.services.acm.model.GetCertificateRequest;
+import software.amazon.awssdk.services.acm.model.GetCertificateResponse;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.io.ByteArrayInputStream;
 
+public static void main(String[] args) {
+        // Create an ACM client
+        AcmClient acmClient = AcmClient.builder().build();
+
+        // Specify the certificate ARN
+        String certificateArn = "arn:aws:acm:region:account-id:certificate/certificate-id";
+
+        // Fetch the certificate
+        GetCertificateRequest request = GetCertificateRequest.builder()
+                .certificateArn(certificateArn)
+                .build();
+        GetCertificateResponse response = acmClient.getCertificate(request);
+
+        // Get the certificate content (PEM format)
+        String certificatePem = response.certificate();
+
+        // Parse the certificate into a Java Certificate object
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            ByteArrayInputStream certStream = new ByteArrayInputStream(certificatePem.getBytes());
+            X509Certificate cert = (X509Certificate) cf.generateCertificate(certStream);
+
+            // Use the certificate
+            System.out.println("Certificate: " + cert);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 openssl x509 -req -in request.csr -signkey private.key -out certificate.crt -days 365
 
