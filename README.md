@@ -1,52 +1,65 @@
-import software.amazon.awssdk.services.acm.AcmClient;
-import software.amazon.awssdk.services.acm.model.GetCertificateRequest;
-import software.amazon.awssdk.services.acm.model.GetCertificateResponse;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.io.ByteArrayInputStream;
+# application.yml (default configuration - no Kafka)
+spring:
+  kafka:
+    bootstrap-servers: "dummy:9092"  # Placeholder, overridden in test profile
+    consumer:
+      group-id: "test-group"
+      auto-offset-reset: "earliest"
+      properties:
+        enable.auto.commit: false
+    producer:
+      retries: 3
+    listener:
+      missing-topics-fatal: false  # Avoids failure if Kafka is unavailable
 
-public static void main(String[] args) {
-        // Create an ACM client
-        AcmClient acmClient = AcmClient.builder().build();
+---
+# application-test.yml (for testing with Embedded Kafka)
+spring:
+  kafka:
+    bootstrap-servers: "${spring.embedded.kafka.brokers}"  # Uses Embedded Kafka
+    consumer:
+      group-id: "test-group"
+      auto-offset-reset: "earliest"
+    listener:
+      type: batch
+import static org.mockito.Mockito.*;
 
-        // Specify the certificate ARN
-        String certificateArn = "arn:aws:acm:region:account-id:certificate/certificate-id";
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
-        // Fetch the certificate
-        GetCertificateRequest request = GetCertificateRequest.builder()
-                .certificateArn(certificateArn)
-                .build();
-        GetCertificateResponse response = acmClient.getCertificate(request);
+import java.util.concurrent.TimeUnit;
 
-        // Get the certificate content (PEM format)
-        String certificatePem = response.certificate();
+@SpringBootTest
+@EmbeddedKafka(partitions = 1, topics = "test-topic")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class MyKafkaListenerTest {
 
-        // Parse the certificate into a Java Certificate object
-        try {
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            ByteArrayInputStream certStream = new ByteArrayInputStream(certificatePem.getBytes());
-            X509Certificate cert = (X509Certificate) cf.generateCertificate(certStream);
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
-            // Use the certificate
-            System.out.println("Certificate: " + cert);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @SpyBean
+    private MyKafkaListener myKafkaListener; // Spy on actual component
+
+    @Test
+    @Timeout(5)
+    void testKafkaListenerReceivesMessage() throws InterruptedException {
+        // Send a message
+        kafkaTemplate.send("test-topic", "test-key", "Hello, Kafka!").get();
+
+        // Wait briefly for processing
+        TimeUnit.SECONDS.sleep(2);
+
+        // Verify that the listener's method was called with expected arguments
+        verify(myKafkaListener, timeout(5000).times(1)).listen(any());
     }
+}
 
-openssl x509 -req -in request.csr -signkey private.key -out certificate.crt -days 365
-
-openssl pkcs12 -export -in certificate.crt -inkey private.key -out keystore.p12 -name myalias
-
-keytool -importkeystore -srckeystore keystore.p12 -srcstoretype PKCS12 -destkeystore keystore.jks -deststoretype JKS
-
-keytool -importkeystore \
-  -srckeystore keystore.p12 \
-  -srcstoretype PKCS12 \
-  -srcstorepass source_password \
-  -destkeystore keystore.jks \
-  -deststoretype JKS \
-  -deststorepass destination_password
 
 # Receipt Processor
 
